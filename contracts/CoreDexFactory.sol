@@ -1,9 +1,9 @@
 pragma solidity =0.5.16;
 
-import './interfaces/ICocoreswapFactory.sol';
-import './CocoreswapPair.sol';
+import './interfaces/ICoreDexFactory.sol';
+import './CoreDexPair.sol';
 
-contract CocoreswapFactory is ICocoreswapFactory {
+contract CoreDexFactory is ICoreDexFactory {
     address public feeTo;
     address public feeToSetter;
 
@@ -17,7 +17,7 @@ contract CocoreswapFactory is ICocoreswapFactory {
     }
 
     //function getInitHash() public pure returns(bytes32){
-    //    bytes memory bytecode = type(CocoreswapPair).creationCode;
+    //    bytes memory bytecode = type(CoreDexPair).creationCode;
     //    return keccak256(abi.encodePacked(bytecode));
     //}
 
@@ -26,16 +26,16 @@ contract CocoreswapFactory is ICocoreswapFactory {
     }
 
     function createPair(address tokenA, address tokenB) external returns (address pair) {
-        require(tokenA != tokenB, 'CocoreSwap: IDENTICAL_ADDRESSES');
+        require(tokenA != tokenB, 'CORE DEX: IDENTICAL_ADDRESSES');
         (address token0, address token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
-        require(token0 != address(0), 'CocoreSwap: ZERO_ADDRESS');
-        require(getPair[token0][token1] == address(0), 'CocoreSwap: PAIR_EXISTS'); // single check is sufficient
-        bytes memory bytecode = type(CocoreswapPair).creationCode;
+        require(token0 != address(0), 'CORE DEX: ZERO_ADDRESS');
+        require(getPair[token0][token1] == address(0), 'CORE DEX: PAIR_EXISTS'); // single check is sufficient
+        bytes memory bytecode = type(CoreDexPair).creationCode;
         bytes32 salt = keccak256(abi.encodePacked(token0, token1));
         assembly {
             pair := create2(0, add(bytecode, 32), mload(bytecode), salt)
         }
-        ICocoreswapPair(pair).initialize(token0, token1);
+        ICoreDexPair(pair).initialize(token0, token1);
         getPair[token0][token1] = pair;
         getPair[token1][token0] = pair; // populate mapping in the reverse direction
         allPairs.push(pair);
@@ -43,12 +43,12 @@ contract CocoreswapFactory is ICocoreswapFactory {
     }
 
     function setFeeTo(address _feeTo) external {
-        require(msg.sender == feeToSetter, 'CocoreSwap: FORBIDDEN');
+        require(msg.sender == feeToSetter, 'CORE DEX: FORBIDDEN');
         feeTo = _feeTo;
     }
 
     function setFeeToSetter(address _feeToSetter) external {
-        require(msg.sender == feeToSetter, 'CocoreSwap: FORBIDDEN');
+        require(msg.sender == feeToSetter, 'CORE DEX: FORBIDDEN');
         feeToSetter = _feeToSetter;
     }
 }

@@ -1,6 +1,6 @@
-# CocoreSwap
+# CORE DEX
 
-CocoreSwap core contracts are the fork of [Uniswap V2](https://github.com/Uniswap/v2-core).
+CORE DEX core contracts are the fork of [Uniswap V2](https://github.com/Uniswap/v2-core).
 
 # Local Development
 

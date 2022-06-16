@@ -7,7 +7,7 @@ import { solidity, MockProvider, createFixtureLoader } from 'ethereum-waffle'
 import { getCreate2Address } from './shared/utilities'
 import { factoryFixture } from './shared/fixtures'
 
-import CocoreswapPair from '../build/CocoreswapPair.json'
+import CoreDexPair from '../build/CoreDexPair.json'
 
 chai.use(solidity)
 
@@ -16,7 +16,7 @@ const TEST_ADDRESSES: [string, string] = [
   '0x2000000000000000000000000000000000000000'
 ]
 
-describe('CocoreswapFactory', () => {
+describe('CoreDexFactory', () => {
   const provider = new MockProvider({
     hardfork: 'istanbul',
     mnemonic: 'horn horn horn horn horn horn horn horn horn horn horn horn',
@@ -38,20 +38,20 @@ describe('CocoreswapFactory', () => {
   })
 
   async function createPair(tokens: [string, string]) {
-    const bytecode = `0x${CocoreswapPair.evm.bytecode.object}`
+    const bytecode = `0x${CoreDexPair.evm.bytecode.object}`
     const create2Address = getCreate2Address(factory.address, tokens, bytecode)
     await expect(factory.createPair(...tokens))
       .to.emit(factory, 'PairCreated')
       .withArgs(TEST_ADDRESSES[0], TEST_ADDRESSES[1], create2Address, bigNumberify(1))
 
-    await expect(factory.createPair(...tokens)).to.be.reverted // CocoreSwap: PAIR_EXISTS
-    await expect(factory.createPair(...tokens.slice().reverse())).to.be.reverted // CocoreSwap: PAIR_EXISTS
+    await expect(factory.createPair(...tokens)).to.be.reverted // CORE DEXp: PAIR_EXISTS
+    await expect(factory.createPair(...tokens.slice().reverse())).to.be.reverted // CORE DEX: PAIR_EXISTS
     expect(await factory.getPair(...tokens)).to.eq(create2Address)
     expect(await factory.getPair(...tokens.slice().reverse())).to.eq(create2Address)
     expect(await factory.allPairs(0)).to.eq(create2Address)
     expect(await factory.allPairsLength()).to.eq(1)
 
-    const pair = new Contract(create2Address, JSON.stringify(CocoreswapPair.abi), provider)
+    const pair = new Contract(create2Address, JSON.stringify(CoreDexPair.abi), provider)
     expect(await pair.factory()).to.eq(factory.address)
     expect(await pair.token0()).to.eq(TEST_ADDRESSES[0])
     expect(await pair.token1()).to.eq(TEST_ADDRESSES[1])
@@ -68,19 +68,19 @@ describe('CocoreswapFactory', () => {
   it('createPair:gas', async () => {
     const tx = await factory.createPair(...TEST_ADDRESSES)
     const receipt = await tx.wait()
-    expect(receipt.gasUsed).to.eq(2513927) //2512920
+    expect(receipt.gasUsed).to.eq(2509920) //2512920
   })
 
   it('setFeeTo', async () => {
-    await expect(factory.connect(other).setFeeTo(other.address)).to.be.revertedWith('CocoreSwap: FORBIDDEN')
+    await expect(factory.connect(other).setFeeTo(other.address)).to.be.revertedWith('CORE DEX: FORBIDDEN')
     await factory.setFeeTo(wallet.address)
     expect(await factory.feeTo()).to.eq(wallet.address)
   })
 
   it('setFeeToSetter', async () => {
-    await expect(factory.connect(other).setFeeToSetter(other.address)).to.be.revertedWith('CocoreSwap: FORBIDDEN')
+    await expect(factory.connect(other).setFeeToSetter(other.address)).to.be.revertedWith('CORE DEX: FORBIDDEN')
     await factory.setFeeToSetter(other.address)
     expect(await factory.feeToSetter()).to.eq(other.address)
-    await expect(factory.setFeeToSetter(wallet.address)).to.be.revertedWith('CocoreSwap: FORBIDDEN')
+    await expect(factory.setFeeToSetter(wallet.address)).to.be.revertedWith('CORE DEX: FORBIDDEN')
   })
 })

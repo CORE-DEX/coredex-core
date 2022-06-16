@@ -1,13 +1,13 @@
 pragma solidity =0.5.16;
 
-import './interfaces/ICocoreswapERC20.sol';
+import './interfaces/ICoreDexERC20.sol';
 import './libraries/SafeMath.sol';
 
-contract CocoreswapERC20 is ICocoreswapERC20 {
+contract CoreDexERC20 is ICoreDexERC20 {
     using SafeMath for uint;
 
-    string public constant name = 'CocoreSwap';
-    string public constant symbol = 'CCS';
+    string public constant name = 'CORE DEX LPs';
+    string public constant symbol = 'CD-LP';
     uint8 public constant decimals = 18;
     uint  public totalSupply;
     mapping(address => uint) public balanceOf;
@@ -79,7 +79,7 @@ contract CocoreswapERC20 is ICocoreswapERC20 {
     }
 
     function permit(address owner, address spender, uint value, uint deadline, uint8 v, bytes32 r, bytes32 s) external {
-        require(deadline >= block.timestamp, 'CocoreSwap: EXPIRED');
+        require(deadline >= block.timestamp, 'CORE DEX: EXPIRED');
         bytes32 digest = keccak256(
             abi.encodePacked(
                 '\x19\x01',
@@ -88,7 +88,7 @@ contract CocoreswapERC20 is ICocoreswapERC20 {
             )
         );
         address recoveredAddress = ecrecover(digest, v, r, s);
-        require(recoveredAddress != address(0) && recoveredAddress == owner, 'CocoreSwap: INVALID_SIGNATURE');
+        require(recoveredAddress != address(0) && recoveredAddress == owner, 'CORE DEX: INVALID_SIGNATURE');
         _approve(owner, spender, value);
     }
 }
