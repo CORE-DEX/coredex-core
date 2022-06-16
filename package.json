@@ -1,14 +1,14 @@
 {
-  "name": "@cocore/swap-core",
-  "description": "🎛 Core contracts for the CocoreSwap protocol",
-  "version": "1.0.0-alpha",
+  "name": "@core-dex/core",
+  "description": "🎛 Core contracts for the CORE DEX protocol",
+  "version": "1.0.1",
   "homepage": "",
   "repository": {
     "type": "git",
-    "url": "https://github.com/CocoreProjects/cocoreswap-core"
+    "url": "https://github.com/CORE-DEX/coredex-core"
   },
   "keywords": [
-    "cocoreswap",
+    "core dex",
     "uniswap",
     "ethereum",
     "core"
